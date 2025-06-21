@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=400, initial-scale=1.0, user-scalable=no">
+  <title>Advanced Markdown Scraper</title>
+  <style>
+    /* Critical CSS for popup dimensions */
+    html, body {
+      width: 400px !important;
+      height: 600px !important;
+      min-width: 400px !important;
+      max-width: 400px !important;
+      min-height: 600px !important;
+      max-height: 600px !important;
+      overflow: hidden !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+  </style>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body style="width: 400px !important; height: 600px !important; min-width: 400px !important; max-width: 400px !important;">
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-content">
+        <div class="logo">
+          <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14,2 14,8 20,8"/>
+            <line x1="16" y1="13" x2="8" y2="13"/>
+            <line x1="16" y1="17" x2="8" y2="17"/>
+            <polyline points="10,9 9,9 8,9"/>
+          </svg>
+          <h1>Markdown Scraper</h1>
+        </div>
+        <button class="theme-toggle" id="themeToggle" title="Toggle theme">
+          <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="5"/>
+            <line x1="12" y1="1" x2="12" y2="3"/>
+            <line x1="12" y1="21" x2="12" y2="23"/>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+            <line x1="1" y1="12" x2="3" y2="12"/>
+            <line x1="21" y1="12" x2="23" y2="12"/>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+          </svg>
+          <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Status Bar -->
+    <div class="status-bar" id="statusBar">
+      <div class="status-content">
+        <div class="status-indicator" id="statusIndicator"></div>
+        <span class="status-text" id="statusText">Ready to scrape</span>
+      </div>
+    </div>
+
+    <!-- Scraping Mode Toggle -->
+    <div class="mode-toggle">
+      <button class="mode-btn active" id="currentPageMode">
+        <svg class="mode-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="7,10 12,15 17,10"/>
+          <line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+        Current Page
+      </button>
+      <button class="mode-btn" id="urlMode">
+        <svg class="mode-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+          <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+        </svg>
+        URL Scraping
+      </button>
+    </div>
+
+    <!-- Current Page Mode -->
+    <div class="scraping-mode active" id="currentPageSection">
+      <div class="actions-section">
+        <div class="primary-actions">
+          <button class="btn btn-primary" id="scrapeBtn">
+            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="7,10 12,15 17,10"/>
+              <line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+            <span class="btn-text">Scrape Current Page</span>
+            <div class="btn-loading">
+              <div class="spinner"></div>
+            </div>
+          </button>
+          
+          <button class="btn btn-secondary" id="settingsBtn">
+            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="3"/>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1 1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1Z"/>
+            </svg>
+            Settings
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- URL Mode -->
+    <div class="scraping-mode" id="urlSection">
+      <div class="url-input-section">
+        <div class="url-input-group">
+          <div class="url-input-wrapper">
+            <input type="url" id="urlInput" placeholder="Enter URL to scrape (e.g., https://example.com)" class="url-input">
+            <button class="url-history-btn" id="urlHistoryBtn" title="Recent URLs">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="3"/>
+                <path d="M12 1v6l4-4-4-4"/>
+                <path d="M12 23v-6l-4 4 4 4"/>
+                <path d="M20 12h-6l4-4-4-4"/>
+                <path d="M4 12h6l-4 4 4 4"/>
+              </svg>
+            </button>
+          </div>
+          <button class="btn btn-primary" id="scrapeUrlBtn">
+            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="7,10 12,15 17,10"/>
+              <line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+            <span class="btn-text">Scrape URL</span>
+            <div class="btn-loading">
+              <div class="spinner"></div>
+            </div>
+          </button>
+        </div>
+        
+        <div class="url-options">
+          <button class="btn btn-outline btn-sm" id="bulkUrlBtn">
+            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
+              <rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
+            </svg>
+            Bulk URLs
+          </button>
+          <button class="btn btn-outline btn-sm" id="settingsBtn2">
+            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="3"/>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1 1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1Z"/>
+            </svg>
+            Settings
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Settings Panel -->
+    <div class="settings-panel" id="settingsPanel">
+      <div class="settings-header">
+        <h3>Scraping Options</h3>
+        <button class="close-btn" id="closeSettings">×</button>
+      </div>
+      <div class="settings-content">
+        <div class="setting-group">
+          <h4 class="setting-group-title">Content Elements</h4>
+          <label class="setting-label">
+            <input type="checkbox" id="includeImages" checked>
+            <span class="checkmark"></span>
+            Include Images
+          </label>
+          <label class="setting-label">
+            <input type="checkbox" id="includeTables" checked>
+            <span class="checkmark"></span>
+            Include Tables
+          </label>
+          <label class="setting-label">
+            <input type="checkbox" id="includeLists" checked>
+            <span class="checkmark"></span>
+            Include Lists
+          </label>
+          <label class="setting-label">
+            <input type="checkbox" id="includeCodeBlocks" checked>
+            <span class="checkmark"></span>
+            Include Code Blocks
+          </label>
+        </div>
+        
+        <div class="setting-group">
+          <h4 class="setting-group-title">Enhancement Options</h4>
+          <label class="setting-label">
+            <input type="checkbox" id="generateTOC">
+            <span class="checkmark"></span>
+            Generate Table of Contents
+          </label>
+          <label class="setting-label">
+            <input type="checkbox" id="addMetadata" checked>
+            <span class="checkmark"></span>
+            Add Metadata (URL, timestamp)
+          </label>
+          <label class="setting-label">
+            <input type="checkbox" id="cleanupText" checked>
+            <span class="checkmark"></span>
+            Smart Text Cleanup
+          </label>
+          <label class="setting-label">
+            <input type="checkbox" id="autoPreview" checked>
+            <span class="checkmark"></span>
+            Auto Preview
+          </label>
+        </div>
+        
+        <div class="setting-group">
+          <h4 class="setting-group-title">Content Filtering</h4>
+          <label class="setting-label">
+            <input type="checkbox" id="skipNavigation" checked>
+            <span class="checkmark"></span>
+            Skip Navigation Elements
+          </label>
+          <label class="setting-label">
+            <input type="checkbox" id="skipAds" checked>
+            <span class="checkmark"></span>
+            Skip Advertisements
+          </label>
+          <label class="setting-label">
+            <input type="checkbox" id="skipComments" checked>
+            <span class="checkmark"></span>
+            Skip Comment Sections
+          </label>
+        </div>
+        
+        <div class="setting-group">
+          <h4 class="setting-group-title">Format Style</h4>
+          <label class="setting-label">
+            <span class="setting-text">Heading Style:</span>
+            <select id="headingStyle" class="setting-select">
+              <option value="atx">ATX (# ## ###)</option>
+              <option value="setext">Setext (underline)</option>
+            </select>
+          </label>
+          <label class="setting-label">
+            <span class="setting-text">List Style:</span>
+            <select id="listStyle" class="setting-select">
+              <option value="dash">Dash (-)</option>
+              <option value="asterisk">Asterisk (*)</option>
+              <option value="plus">Plus (+)</option>
+            </select>
+          </label>
+          <label class="setting-label">
+            <input type="checkbox" id="customFormatting">
+            <span class="checkmark"></span>
+            Custom Formatting
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Content Area -->
+    <div class="content-area">
+      <div class="tabs">
+        <button class="tab active" data-tab="markdown">Markdown</button>
+        <button class="tab" data-tab="preview">Preview</button>
+      </div>
+      
+      <div class="tab-content">
+        <div class="tab-pane active" id="markdownTab">
+          <textarea 
+            id="markdown" 
+            placeholder="Your scraped markdown will appear here..."
+            rows="15"
+          ></textarea>
+        </div>
+        
+        <div class="tab-pane" id="previewTab">
+          <div class="preview-content" id="previewContent">
+            <div class="preview-placeholder">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+              <p>Preview will appear here after scraping</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="bottom-actions">
+      <button class="btn btn-outline" id="copyBtn">
+        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+        </svg>
+        Copy
+      </button>
+      
+      <button class="btn btn-outline" id="downloadBtn">
+        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-15"/>
+          <polyline points="7,10 12,15 17,10"/>
+          <line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+        Download
+      </button>
+      
+      <button class="btn btn-outline" id="clearBtn">
+        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="3,6 5,6 21,6"/>
+          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+        </svg>
+        Clear
+      </button>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div class="toast-container" id="toastContainer"></div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
